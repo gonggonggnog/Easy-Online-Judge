@@ -9,8 +9,8 @@ type SubmitBasic struct {
 	UserIdentity    string         `gorm:"column:user_identity;type:varchar(36);" json:"user_identity"`
 	Status          int            `gorm:"column:status;type:tinyint;" json:"status"` //状态 -为等待判断，1为答案正确，2为答案错误，3为超时，4为超内存
 	Path            string         `gorm:"column:path;type:varchar(255);" json:"path"`
-	ProblemsBasic   *ProblemsBasic `gorm:"foreignKey:identity;references:problem_identity" json:"problems_basic"`
-	UserBasic       *UserBasic     `gorm:"foreignKey:identity;references:user_identity" json:"user_basic"`
+	ProblemBasic    *ProblemsBasic `gorm:"foreignKey:identity;references:problem_identity;" json:"problem_basic"`
+	UserBasic       *UserBasic     `gorm:"foreignKey:identity;references:user_identity;" json:"user_basic"`
 }
 
 func (table *SubmitBasic) TableName() string {

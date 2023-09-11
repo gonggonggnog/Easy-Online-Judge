@@ -26,11 +26,11 @@ func GetSubmitList(c *gin.Context) {
 	status, _ := strconv.Atoi(c.DefaultQuery("status", define.DefaultStatus))
 	problemIdentity := c.Query("problem_identity")
 	userIdentity := c.Query("user_identity")
-	data := new(models.SubmitBasic)
+	list := make([]*models.SubmitBasic, 0)
 	page = (page - 1) * size
 	var count int64
 	tx := dao.GetSubmitList(userIdentity, problemIdentity, status)
-	err := tx.Offset(page).Limit(size).Count(&count).Find(&data).Error
+	err := tx.Count(&count).Offset(page).Limit(size).Find(&list).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(200, gin.H{
@@ -45,11 +45,12 @@ func GetSubmitList(c *gin.Context) {
 		})
 		return
 	}
+
 	c.JSON(200, gin.H{
 		"code": 200,
 		"data": gin.H{
 			"count": count,
-			"data":  data,
+			"list":  list,
 		},
 	})
 }

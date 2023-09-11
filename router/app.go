@@ -13,10 +13,11 @@ func Router() *gin.Engine {
 	r.GET("/ping", func(context *gin.Context) {
 		context.String(200, "pong")
 	})
-	r.GET("/problem-list", service.GetProblemList)
+	r.GET("/problem-list", service.GetProblemList) //获取问题列表
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	r.GET("/problem-detail", service.GetProblemDetail)
-	r.GET("/user-detail", service.GetUserDetail)
-	r.GET("/submit-list", service.GetSubmitList)
+	r.GET("/problem-detail", service.GetProblemDetail) //获取问题详情
+	r.GET("/user-detail", service.GetUserDetail)       //获取用户详情
+	r.GET("/submit-list", service.GetSubmitList)       //获取提交列表
+	r.POST("/login", service.Login)
 	return r
 }
