@@ -86,7 +86,7 @@ const docTemplate = `{
                 "tags": [
                     "公共方法"
                 ],
-                "summary": "用户详情",
+                "summary": "提交列表",
                 "parameters": [
                     {
                         "type": "integer",
@@ -110,6 +110,12 @@ const docTemplate = `{
                         "type": "string",
                         "description": "user identity",
                         "name": "user_identity",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "status",
+                        "name": "status",
                         "in": "query"
                     }
                 ],

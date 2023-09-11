@@ -62,12 +62,16 @@ paths:
         in: query
         name: user_identity
         type: string
+      - description: status
+        in: query
+        name: status
+        type: integer
       responses:
         "200":
           description: '{"code":"200","data":""}'
           schema:
             type: string
-      summary: 用户详情
+      summary: 提交列表
       tags:
       - 公共方法
   /user-detail:
