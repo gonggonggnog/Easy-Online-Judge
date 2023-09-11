@@ -1,6 +1,8 @@
 package dao
 
-import "blog/models"
+import (
+	"blog/models"
+)
 
 func GetPasswd(username string) (models.UserBasic, error) {
 	var data models.UserBasic

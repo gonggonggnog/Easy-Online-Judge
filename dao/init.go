@@ -9,7 +9,7 @@ import (
 var DB = Init()
 
 func Init() *gorm.DB {
-	dsn := "root:123456@tcp(127.0.0.1:3306)/gin_oj?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:123456@tcp(47.115.224.170:3306)/gin_oj?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		fmt.Println("连接失败")

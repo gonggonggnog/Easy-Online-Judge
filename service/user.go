@@ -7,6 +7,8 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"math/rand"
+	"strconv"
 )
 
 // GetUserDetail
@@ -78,7 +80,6 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
-	//fmt.Println(helper.GetMd5("123123"))
 	if data.Password != helper.GetMd5(password) {
 		c.JSON(200, gin.H{
 			"code": -1,
@@ -100,5 +101,34 @@ func Login(c *gin.Context) {
 			"msg":   "登录成功",
 			"token": tokenString,
 		},
+	})
+}
+
+// SendCode
+// @Tags 公共方法
+// @Summary 发送验证码
+// @Param email formData string true "email"
+// @Success 200 {string} json "{"code":"200","data":""}"
+// @Router /send-code [post]
+func SendCode(c *gin.Context) {
+	email := c.PostForm("email")
+	if email == "" {
+		c.JSON(200, gin.H{
+			"code": -1,
+			"data": "参数不正确",
+		})
+	}
+	code := strconv.Itoa(rand.Int()%1000000 + 100000)
+	err := helper.SendEmail("405351435@qq.com", code)
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code": -1,
+			"data": "send email failed:" + err.Error(),
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"code": 200,
+		"data": "send email success",
 	})
 }
