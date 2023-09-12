@@ -20,7 +20,7 @@ func RedisSet(key, value string) {
 }
 
 func RedisGet(key string) (string, error) {
-	return RDB.Get(ctx, "name").Result()
+	return RDB.Get(ctx, key).Result()
 }
 func Init() *gorm.DB {
 	dsn := "root:gong123123@tcp(47.115.224.170:8988)/ginoj?charset=utf8mb4&parseTime=True&loc=Local"

@@ -2,11 +2,13 @@ package service
 
 import (
 	"blog/dao"
+	"blog/define"
 	"blog/helper"
 	"blog/models"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"log"
 	"math/rand"
 	"strconv"
 )
@@ -118,7 +120,7 @@ func SendCode(c *gin.Context) {
 			"data": "参数不正确",
 		})
 	}
-	code := strconv.Itoa(rand.Int()%1000000 + 100000)
+	code := strconv.Itoa(rand.Int()%899999 + 100000)
 	dao.RedisSet(email, code)
 	err := helper.SendEmail("405351435@qq.com", code)
 	if err != nil {
@@ -136,7 +138,7 @@ func SendCode(c *gin.Context) {
 
 // Register
 // @Tags 公共方法
-// @Summary 注册用户
+// @Summary 用户注册
 // @Param email formData string true "email"
 // @Param code formData string true "code"
 // @Param name formData string true "name"
@@ -144,7 +146,6 @@ func SendCode(c *gin.Context) {
 // @Param phone formData string false "phone"
 // @Success 200 {string} json "{"code":"200","data":""}"
 // @Router /register [post]
-
 func Register(c *gin.Context) {
 	email := c.PostForm("email")
 	userCode := c.PostForm("code")
@@ -158,21 +159,25 @@ func Register(c *gin.Context) {
 		})
 		return
 	}
-	sysCode, err := dao.RedisGet(email)
-	if err != nil {
+	var isExists int64
+	dao.DB.Model(new(models.UserBasic)).Where("email = ?", email).Count(&isExists)
+	if isExists > 0 {
 		c.JSON(200, gin.H{
 			"code": -1,
-			"data": "redis get code error:" + err.Error(),
+			"data": "该邮箱已被注册",
 		})
 		return
 	}
-	if sysCode != userCode {
+	sysCode, err := dao.RedisGet(email)
+	if sysCode != userCode || err != nil {
 		c.JSON(200, gin.H{
 			"code": -1,
 			"data": "验证码不正确，请重新获取验证码",
 		})
+		log.Println(err.Error())
 		return
 	}
+
 	UserIdentity := helper.GenerateUUid()
 	data := &models.UserBasic{
 		Identity: UserIdentity,
@@ -202,6 +207,45 @@ func Register(c *gin.Context) {
 		"code": 200,
 		"data": gin.H{
 			"token": token,
+		},
+	})
+}
+
+// GetRankList
+// @Tags 公共方法
+// @Summary 用户排行榜
+// @Param page query int false "page"
+// @Param size query int false "size"
+// @Success 200 {string} json "{"code":"200","data":""}"
+// @Router /rank-list [get]
+func GetRankList(c *gin.Context) {
+	var count int64
+	list := make([]*models.UserBasic, 0)
+	page, err := strconv.Atoi(c.DefaultQuery("page", define.DefaultPage))
+	if err != nil {
+		log.Fatal("get problem page error:", err)
+		return
+	}
+	size, terr := strconv.Atoi(c.DefaultQuery("size", define.DefaultSize))
+	if terr != nil {
+		log.Fatal("get problem size error:", err)
+		return
+	}
+	page = (page - 1) * size
+	err = dao.DB.Model(new(models.UserBasic)).Count(&count).Select("id,name,pass_num,submit_num").Order("pass_num DESC,submit_num ASC").
+		Offset(page).Limit(size).Find(&list).Error
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code": -1,
+			"data": "get rank list error:" + err.Error(),
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"code": 200,
+		"data": gin.H{
+			"list":  list,
+			"count": count,
 		},
 	})
 }
