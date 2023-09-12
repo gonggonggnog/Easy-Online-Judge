@@ -119,6 +119,7 @@ func SendCode(c *gin.Context) {
 		})
 	}
 	code := strconv.Itoa(rand.Int()%1000000 + 100000)
+	dao.RedisSet(email, code)
 	err := helper.SendEmail("405351435@qq.com", code)
 	if err != nil {
 		c.JSON(200, gin.H{
@@ -130,5 +131,77 @@ func SendCode(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"code": 200,
 		"data": "send email success",
+	})
+}
+
+// Register
+// @Tags 公共方法
+// @Summary 注册用户
+// @Param email formData string true "email"
+// @Param code formData string true "code"
+// @Param name formData string true "name"
+// @Param password formData string true "password"
+// @Param phone formData string false "phone"
+// @Success 200 {string} json "{"code":"200","data":""}"
+// @Router /register [post]
+
+func Register(c *gin.Context) {
+	email := c.PostForm("email")
+	userCode := c.PostForm("code")
+	name := c.PostForm("name")
+	password := c.PostForm("password")
+	phone := c.PostForm("phone")
+	if email == "" || userCode == "" || name == "" || password == "" {
+		c.JSON(200, gin.H{
+			"code": -1,
+			"data": "必填项目不能为空",
+		})
+		return
+	}
+	sysCode, err := dao.RedisGet(email)
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code": -1,
+			"data": "redis get code error:" + err.Error(),
+		})
+		return
+	}
+	if sysCode != userCode {
+		c.JSON(200, gin.H{
+			"code": -1,
+			"data": "验证码不正确，请重新获取验证码",
+		})
+		return
+	}
+	UserIdentity := helper.GenerateUUid()
+	data := &models.UserBasic{
+		Identity: UserIdentity,
+		Name:     name,
+		Password: helper.GetMd5(password),
+		Email:    email,
+		Phone:    phone,
+	}
+	err = dao.DB.Create(data).Error
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code": -1,
+			"data": "user create error" + err.Error(),
+		})
+		return
+	}
+	var token string
+	token, err = helper.GenerateToken(UserIdentity, name, 0)
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code": -1,
+			"data": "token generate error:" + err.Error(),
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"code": 200,
+		"data": gin.H{
+			"token": token,
+		},
 	})
 }

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jordan-wright/email"
+	uuid "github.com/satori/go.uuid"
 	"net/smtp"
 )
 
@@ -49,4 +50,8 @@ func SendEmail(toUserEmail, code string) error {
 	return e.SendWithTLS("smtp.163.com:465",
 		smtp.PlainAuth("", "13320064423@163.com", define.MailPassword, "smtp.163.com"),
 		&tls.Config{InsecureSkipVerify: true, ServerName: "smtp.163.com"})
+}
+
+func GenerateUUid() string {
+	return uuid.NewV4().String()
 }
