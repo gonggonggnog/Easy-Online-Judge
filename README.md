@@ -25,8 +25,8 @@
 1. 克隆项目到本地：
 
    ```
-   colne https://github.com/gonggonggnog/gin-oj.git
-   cd gin-oj
+   colne https://github.com/gonggonggnog/Easy-Online-Judge.git
+   cd Easy-Online-Judge
    ```
 
 2. 安装依赖：
