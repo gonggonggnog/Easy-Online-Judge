@@ -6,9 +6,9 @@ import (
 )
 
 func GetSubmitList(userIdentity, problemIdentity string, status int) *gorm.DB {
-	tx := DB.Model(new(models.SubmitBasic)).Preload("ProblemBasic", func(db *gorm.DB) *gorm.DB {
+	tx := DB.Model(new(models.SubmitBasic)).Preload("ProblemBasic", func(db *gorm.DB) *gorm.DB { // 预加载
 		return db.Omit("content")
-	}).Preload("UserBasic", func(db *gorm.DB) *gorm.DB {
+	}).Preload("UserBasic", func(db *gorm.DB) *gorm.DB { // 预加载
 		return db.Omit("password")
 	})
 	if userIdentity != "" {

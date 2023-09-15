@@ -1,6 +1,230 @@
 info:
   contact: {}
 paths:
+  /admin/category-create:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: parent_id
+        in: formData
+        name: parent_id
+        type: string
+      responses:
+        "200":
+          description: '{"code":"200","data":""}'
+          schema:
+            type: string
+      summary: 添加分类
+      tags:
+      - 管理员私有方法
+  /admin/category-delete:
+    delete:
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: identity
+        in: query
+        name: identity
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{"code":"200","data":""}'
+          schema:
+            type: string
+      summary: 删除分类
+      tags:
+      - 管理员私有方法
+  /admin/category-list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: size
+        in: query
+        name: size
+        type: integer
+      - description: keyword
+        in: query
+        name: keyword
+        type: string
+      responses:
+        "200":
+          description: '{"code":"200","data":""}'
+          schema:
+            type: string
+      summary: 分类列表
+      tags:
+      - 管理员私有方法
+  /admin/category-update:
+    put:
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: identity
+        in: formData
+        name: identity
+        required: true
+        type: string
+      - description: name
+        in: formData
+        name: name
+        type: string
+      - description: parent_id
+        in: formData
+        name: parent_id
+        type: string
+      responses:
+        "200":
+          description: '{"code":"200","data":""}'
+          schema:
+            type: string
+      summary: 更新分类
+      tags:
+      - 管理员私有方法
+  /admin/problem-create:
+    post:
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: content
+        in: formData
+        name: content
+        required: true
+        type: string
+      - description: max_runtime
+        in: formData
+        name: max_runtime
+        type: integer
+      - description: max_mem
+        in: formData
+        name: max_mem
+        type: integer
+      - collectionFormat: multi
+        description: category_ids
+        in: formData
+        items:
+          type: string
+        name: category_ids
+        type: array
+      - collectionFormat: multi
+        description: test_case
+        in: formData
+        items:
+          type: string
+        name: test_case
+        required: true
+        type: array
+      responses:
+        "200":
+          description: '{"code":"200","data":""}'
+          schema:
+            type: string
+      summary: 问题创建
+      tags:
+      - 管理员私有方法
+  /admin/problem-delete:
+    delete:
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: identity
+        in: formData
+        name: identity
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{"code":"200","data":""}'
+          schema:
+            type: string
+      summary: 问题删除
+      tags:
+      - 管理员私有方法
+  /admin/problem-update:
+    put:
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: identity
+        in: formData
+        name: identity
+        required: true
+        type: string
+      - description: title
+        in: formData
+        name: title
+        type: string
+      - description: content
+        in: formData
+        name: content
+        type: string
+      - description: max_runtime
+        in: formData
+        name: max_runtime
+        type: integer
+      - description: max_mem
+        in: formData
+        name: max_mem
+        type: integer
+      - collectionFormat: multi
+        description: category_ids
+        in: formData
+        items:
+          type: string
+        name: category_ids
+        type: array
+      - collectionFormat: multi
+        description: test_case
+        in: formData
+        items:
+          type: string
+        name: test_case
+        type: array
+      responses:
+        "200":
+          description: '{"code":"200","data":""}'
+          schema:
+            type: string
+      summary: 问题更新
+      tags:
+      - 管理员私有方法
   /login:
     post:
       parameters:
@@ -178,4 +402,31 @@ paths:
       summary: 用户详情
       tags:
       - 公共方法
+  /user/submit:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: problem identity
+        in: query
+        name: problem_identity
+        required: true
+        type: string
+      - description: code
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: '{"code":"200","data":""}'
+          schema:
+            type: string
+      summary: 代码提交
+      tags:
+      - 用户私有方法
 swagger: "2.0"

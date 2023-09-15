@@ -5,7 +5,6 @@ import (
 )
 
 func main() {
-
 	r := router.Router()
 	_ = r.Run(":8988")
 }

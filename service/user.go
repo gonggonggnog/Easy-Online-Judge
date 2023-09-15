@@ -29,16 +29,16 @@ func GetUserDetail(c *gin.Context) {
 		return
 	}
 	data := new(models.UserBasic)
-	err := dao.DB.Where("identity=?", identity).Omit("password").First(&data).Error
+	err := dao.DB.Where("identity=?", identity).Omit("password").First(&data).Error // Omit("password")忽略password字段
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) { // 判断是否为记录未找到的错误
 			c.JSON(200, gin.H{
 				"code": -1,
 				"msg":  "用户标识不存在",
 			})
 			return
 		}
-		c.JSON(200, gin.H{
+		c.JSON(200, gin.H{ // 其他错误
 			"code": -1,
 			"msg":  "Get ProblemDetail Error:" + err.Error(),
 		})
@@ -60,7 +60,7 @@ func GetUserDetail(c *gin.Context) {
 func Login(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
-	if username == "" || password == "" {
+	if username == "" || password == "" { // 判断是否为空
 		c.JSON(200, gin.H{
 			"code": -1,
 			"data": "必填信息为空",
@@ -69,31 +69,31 @@ func Login(c *gin.Context) {
 	}
 	data, err := dao.GetPasswd(username)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) { // 判断是否为记录未找到的错误
 			c.JSON(200, gin.H{
 				"code": -1,
 				"data": "账号不存在",
 			})
 			return
 		}
-		c.JSON(200, gin.H{
+		c.JSON(200, gin.H{ // 其他错误
 			"code": -1,
 			"data": "err occur while get passwd:" + err.Error(),
 		})
 		return
 	}
-	if data.Password != helper.GetMd5(password) {
+	if data.Password != helper.GetMd5(password) { // 判断密码是否正确
 		c.JSON(200, gin.H{
 			"code": -1,
 			"data": "账号密码不匹配",
 		})
 		return
 	}
-	tokenString, err := helper.GenerateToken(data.Identity, data.Name, data.IsAdmin)
+	tokenString, err := helper.GenerateToken(data.Identity, data.Name, data.IsAdmin) // 生成token
 	if err != nil {
 		c.JSON(200, gin.H{
 			"code": -1,
-			"data": "generate toke  failed:" + err.Error(),
+			"data": "generate toke failed:" + err.Error(),
 		})
 		return
 	}
@@ -121,8 +121,8 @@ func SendCode(c *gin.Context) {
 		})
 	}
 	code := strconv.Itoa(rand.Int()%899999 + 100000)
-	dao.RedisSet(email, code)
-	err := helper.SendEmail("405351435@qq.com", code)
+	dao.RedisSet(email, code)                         // 将验证码存入redis
+	err := helper.SendEmail("405351435@qq.com", code) // 发送邮件
 	if err != nil {
 		c.JSON(200, gin.H{
 			"code": -1,
@@ -160,7 +160,7 @@ func Register(c *gin.Context) {
 		return
 	}
 	var isExists int64
-	dao.DB.Model(new(models.UserBasic)).Where("email = ?", email).Count(&isExists)
+	dao.DB.Model(new(models.UserBasic)).Where("email = ?", email).Count(&isExists) // 判断邮箱是否已被注册
 	if isExists > 0 {
 		c.JSON(200, gin.H{
 			"code": -1,
@@ -232,8 +232,9 @@ func GetRankList(c *gin.Context) {
 		return
 	}
 	page = (page - 1) * size
-	err = dao.DB.Model(new(models.UserBasic)).Count(&count).Select("id,name,pass_num,submit_num").Order("pass_num DESC,submit_num ASC").
-		Offset(page).Limit(size).Find(&list).Error
+	err = dao.DB.Model(new(models.UserBasic)).Count(&count).Select("id,name,pass_num,submit_num").
+		Order("pass_num DESC,submit_num ASC").
+		Offset(page).Limit(size).Find(&list).Error // 分页查询
 	if err != nil {
 		c.JSON(200, gin.H{
 			"code": -1,

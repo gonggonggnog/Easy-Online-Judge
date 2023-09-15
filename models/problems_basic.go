@@ -10,6 +10,9 @@ type ProblemsBasic struct {
 	Content           string              `gorm:"column:content;type:text;" json:"content"`                      //问题正文描述
 	MaxRuntime        int                 `gorm:"column:max_runtime;type:int;" json:"max_runtime"`
 	MaxMem            int                 `gorm:"column:max_mem;type:int;" json:"max_mem"`
+	PassNum           int64               `gorm:"column:pass_num;type:int(11);" json:"pass_num"`     // 通过的次数
+	SubmitNum         int64               `gorm:"column:submit_num;type:int(11);" json:"submit_num"` // 提交次数
+	TestCase          []*TestCase         `gorm:"foreignKey:problem_identity;references:identity" json:"test_case"`
 }
 
 func (table *ProblemsBasic) TableName() string {
