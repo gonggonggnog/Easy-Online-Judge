@@ -23,7 +23,7 @@ func RedisGet(key string) (string, error) {
 	return RDB.Get(ctx, key).Result()
 }
 func Init() *gorm.DB {
-	dsn := "root:gong123123@tcp(47.115.224.170:8988)/ginoj?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:123123@tcp(127.0.0.1:3306)/ginoj?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		fmt.Println("连接失败")
