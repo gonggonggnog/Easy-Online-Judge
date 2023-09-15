@@ -58,5 +58,5 @@
 您可以使用Swagger生成的API文档来查看和测试API。访问以下链接：
 
 ```
-http://localhost:8080/swagger/index.html
+http://localhost:8988/swagger/index.html
 ```
